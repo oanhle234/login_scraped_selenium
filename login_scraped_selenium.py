@@ -2,6 +2,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
+from datetime import datetime as dt
 
 service = Service('chromedriver.exe')
 
@@ -24,6 +25,12 @@ def split_text(text):
     return output
 
 
+def write_file(text):
+    filename = f"{dt.now().strftime('%Y-%m-%d.%H-%M-%S')}.txt"
+    with open(filename, 'w') as file:
+        file.write(text)
+
+
 def main():
     driver = get_driver()
     time.sleep(1)
@@ -33,9 +40,10 @@ def main():
     driver.find_element(by='id', value='id_password').send_keys('automatedautomated' + Keys.RETURN)
     time.sleep(1)
     driver.find_element(by='xpath', value='/html/body/nav/div/a').click()
-    time.sleep(2)
-    value = driver.find_element(by='xpath', value='/html/body/div[1]/div/h1[2]')
-    print(type(value.text))
-    return split_text(value.text)
+    while True:
+        time.sleep(2)
+        value = driver.find_element(by='xpath', value='/html/body/div[1]/div/h1[2]')
+        text = str(split_text(value.text))
+        write_file(text)
     
 print(main())
